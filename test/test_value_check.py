@@ -87,4 +87,3 @@ def test_cover_none_value():
 
     assert schema.check(None) is False
     assert schema.check(2) is True
-
