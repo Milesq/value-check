@@ -74,3 +74,17 @@ def test_custom_checkable():
     assert schema.check({"person": "Anakin Skywalker"})
 
     assert not schema.check({"person": "Obi-Wan Kenobi"})
+
+
+def test_cover_none_value():
+    schema = ValReq(eq=None)
+
+    assert schema.check(None) is True
+    assert schema.check(1) is False
+
+
+    schema = ValReq(ne=None)
+
+    assert schema.check(None) is False
+    assert schema.check(2) is True
+
