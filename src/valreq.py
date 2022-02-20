@@ -5,17 +5,25 @@ from typing import Callable, Optional, Union, Any
 from .checkable import Checkable
 
 
+class SkipOp:
+    def __eq__(self, obj) -> bool:
+        return isinstance(obj, SkipOp)
+
+
+skip_op = SkipOp()
+
+
 @dataclass
 class ValReq(Checkable):
     # pylint: disable=invalid-name
-    ne: Optional[int] = None
-    eq: Optional[int] = None
+    ne: Optional[int] = skip_op
+    eq: Optional[int] = skip_op
 
-    lt: Optional[int] = None
-    gt: Optional[int] = None
+    lt: Optional[int] = skip_op
+    gt: Optional[int] = skip_op
 
-    le: Optional[int] = None
-    ge: Optional[int] = None
+    le: Optional[int] = skip_op
+    ge: Optional[int] = skip_op
 
     cast: Union[type, Callable] = lambda x: x
 
@@ -23,7 +31,8 @@ class ValReq(Checkable):
         name = type(self).__name__
 
         attrs = self.__dict__.items()
-        args = [f'{k}={v}' for k, v in attrs if v is not None and k != 'cast']
+        args = [f'{k}={v}' for k,
+                v in attrs if v is not skip_op and k != 'cast']
 
         return f"{name}({', '.join(args)})"
 
@@ -33,7 +42,7 @@ class ValReq(Checkable):
 
         for op_to_check in operators:
             constraint = getattr(self, op_to_check)
-            if constraint is None:
+            if constraint == skip_op:
                 continue
 
             current_op = getattr(operator, op_to_check)
