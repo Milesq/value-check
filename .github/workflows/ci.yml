@@ -18,5 +18,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - run: pip install -r dev.txt
       - run: python -m pylint src test
       - run: python -m pytest
